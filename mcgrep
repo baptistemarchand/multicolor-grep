@@ -1,0 +1,16 @@
+#!/bin/sh
+
+alias ggrep='grep -E --color=always --line-buffered'
+OLD_IFS=$IFS # Save IFS
+IFS='|'
+
+grep -E --color=never "$*" \
+| GREP_COLOR='1;31' ggrep "$1|$" \
+| GREP_COLOR='1;32' ggrep "$2|$" \
+| GREP_COLOR='1;33' ggrep "$3|$" \
+| GREP_COLOR='1;34' ggrep "$4|$" \
+| GREP_COLOR='1;35' ggrep "$5|$" \
+| GREP_COLOR='1;36' ggrep "$6|$"
+
+unalias ggrep
+IFS=$OLD_IFS # Restore IFS
