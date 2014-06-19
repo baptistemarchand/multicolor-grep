@@ -15,14 +15,15 @@ IFS='|'
 # to match every line. That way we don't lose the output of previous
 # commands.
 # This is why we need the first 'grep $*' to select only the lines we want.
-grep -E --color=never "$*" \
-| ([ $# -gt 0 ] && GREP_COLOR='1;31' ggrep "$1|$" || cat) \
-| ([ $# -gt 1 ] && GREP_COLOR='1;32' ggrep "$2|$" || cat) \
-| ([ $# -gt 2 ] && GREP_COLOR='1;33' ggrep "$3|$" || cat) \
-| ([ $# -gt 3 ] && GREP_COLOR='1;34' ggrep "$4|$" || cat) \
-| ([ $# -gt 4 ] && GREP_COLOR='1;35' ggrep "$5|$" || cat) \
-| ([ $# -gt 5 ] && GREP_COLOR='1;36' ggrep "$6|$" || cat)
+cmd="grep -E --color=never \"$*\""
 
+IFS=$OLD_IFS # Restore IFS
+
+for i in `seq $#`; do
+  color="1;3$i"
+  cmd="$cmd | GREP_COLOR=\"$color\" ggrep \"$1|$\""
+  shift
+done
+eval $cmd
 
 unalias ggrep
-IFS=$OLD_IFS # Restore IFS
