@@ -4,13 +4,25 @@ alias ggrep='grep -E --color=always --line-buffered'
 OLD_IFS=$IFS # Save IFS
 IFS='|'
 
+# Because the IFS is '|', the variable $* will expand to
+# all the parameters separated by '|' (e.g: "foo|bar|baz"),
+# resulting in an OR expression.
+# The first line searches for all the patterns in the standard input.
+# The following lines colorizes every argument with a different color.
+# If the argument doesn't exists we just 'cat' so that the output of
+# previous commands goes through.
+# If the argument exists we grep it but we also add '|$' to our pattern
+# to match every line. That way we don't lose the output of previous
+# commands.
+# This is why we need the first 'grep $*' to select only the lines we want.
 grep -E --color=never "$*" \
-| GREP_COLOR='1;31' ggrep "$1|$" \
-| GREP_COLOR='1;32' ggrep "$2|$" \
-| GREP_COLOR='1;33' ggrep "$3|$" \
-| GREP_COLOR='1;34' ggrep "$4|$" \
-| GREP_COLOR='1;35' ggrep "$5|$" \
-| GREP_COLOR='1;36' ggrep "$6|$"
+| ([ $# -gt 0 ] && GREP_COLOR='1;31' ggrep "$1|$" || cat) \
+| ([ $# -gt 1 ] && GREP_COLOR='1;32' ggrep "$2|$" || cat) \
+| ([ $# -gt 2 ] && GREP_COLOR='1;33' ggrep "$3|$" || cat) \
+| ([ $# -gt 3 ] && GREP_COLOR='1;34' ggrep "$4|$" || cat) \
+| ([ $# -gt 4 ] && GREP_COLOR='1;35' ggrep "$5|$" || cat) \
+| ([ $# -gt 5 ] && GREP_COLOR='1;36' ggrep "$6|$" || cat)
+
 
 unalias ggrep
 IFS=$OLD_IFS # Restore IFS
