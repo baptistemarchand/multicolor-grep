@@ -15,7 +15,7 @@ IFS='|'
 # to match every line. That way we don't lose the output of previous
 # commands.
 # This is why we need the first 'grep $*' to select only the lines we want.
-cmd="grep -E --color=never \"$*\""
+cmd="grep -E --color=never --line-buffered \"$*\""
 
 IFS=$OLD_IFS # Restore IFS
 
